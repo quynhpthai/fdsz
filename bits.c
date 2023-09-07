@@ -194,7 +194,7 @@ int bitMatch(int x, int y) {
 int bitXor(int x, int y) {
   int notX=(~x&y);
   int notY=(x&~y);
-  return notX|notY;
+  return ~((~notX)&(~notY));
 }
 /* 
  * minusOne - return a value of -1 
@@ -248,7 +248,7 @@ int anyEvenBit(int x) {
  *  Rating: 2
  */
 int byteSwap(int x, int n, int m) {
-    	unsigned int one=0xFF;
+        int one=0xFF;
 	int y=0;
 	int leftB=(x>>(n<<3));
 	int rightB=(x>>(m<<3));
@@ -267,6 +267,10 @@ int byteSwap(int x, int n, int m) {
  *   Rating: 2
  */
 int dividePower2(int x, int n) {
+   int sign=x>>31;
+   int bias=(1<<n)+~0;
+   int adj_x=(x+(sign&bias))>>n;
+   return adj_x;
     return 2;
 }
 /* 
@@ -335,8 +339,7 @@ int bitMask(int highbit, int lowbit) {
   int negOne=~0;
   lowbit=(negOne<<lowbit);
   highbit=(negOne<<highbit)<<1;
-  int plus=lowbit^highbit;
-  return plus&lowbit;
+  return (lowbit^highbit)&lowbit;
 }
 /*
  * ezThreeFourths - multiplies by 3/4 rounding toward 0,
