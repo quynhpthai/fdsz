@@ -223,7 +223,8 @@ int specialBits(void) {
  *   Rating: 1
  */
 int tmax(void) {
-  return 2;
+  int eight=0x8;
+  return ~(eight<<28);
 }
 //2
 /* 
@@ -291,7 +292,10 @@ unsigned floatNegate(unsigned uf) {
  *   Rating: 2
  */
 int getByte(int x, int n) {
-  return 2;
+  int k=0xFF;
+  int h=k<<(n<<3);
+  int a=x&h;
+  return (a>>(n<<3))&k;
 }
 /* 
  * isEqual - return 1 if x == y, and 0 otherwise 
