@@ -214,10 +214,7 @@ int minusOne(void) {
  *   Rating: 1
  */
 int specialBits(void) {
-    unsigned int bitP=0x28;
-    int t=(~0)&(~bitP<<14);
-
-    return ~t;
+    return ~(0xD7 <<14);
 }
 /* 
  * TMax - return maximum two's complement integer 
@@ -359,7 +356,11 @@ int ezThreeFourths(int x) {
  *   Rating: 3
  */
 int isGreater(int x, int y) {
-  return 2;
+  int signX=(x>>31)&1;//return 1 if sign is negative
+  int signY=(y>>31)&1;
+  int signD=(signX^signY)&signX;
+  int dSign=(((x+(~y+1))>>31)&1);
+  return  signD|dSign;
 }
 /* 
  * replaceByte(x,n,c) - Replace byte n in x with c
@@ -371,7 +372,11 @@ int isGreater(int x, int y) {
  *   Rating: 3
  */
 int replaceByte(int x, int n, int c) {
-  return 2;
+  int mask=0xFF;
+  int shift=n<<3;
+   mask=~(mask<<shift);
+   c=c<<shift;
+  return (x&mask)|c;
 }
 //4
 /* 
@@ -394,7 +399,12 @@ int bang(int x) {
  *   Rating: 4
  */
 int bitParity(int x) {
-  return 2;
+  x=x^(x>>16);
+  x=x^(x>>8);
+  x=x^(x>>4);
+  x=x^(x>>2);
+  x=x^(x>>1);
+  return x & 0x01;
 }
 /* howManyBits - return the minimum number of bits required to represent x in
  *             two's complement
@@ -430,7 +440,9 @@ int isPallindrome(int x) {
  *   Rating: 4
  */
 int isPower2(int x) {
-  return 2;
+  int isNegative=(!x<<31)>>31;
+  int oneB=(~(x&(~x+1))|(0x01<<31))&x;
+  return (~isNegative&!oneB);
 }
 /* 
  * signMag2TwosComp - Convert from sign-magnitude to two's complement
