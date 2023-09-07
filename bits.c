@@ -383,9 +383,10 @@ int ezThreeFourths(int x) {
 int isGreater(int x, int y) {
   int signX=(x>>31)&1;//return 1 if sign is negative
   int signY=(y>>31)&1;
-  int signD=(signX^signY)&signX;
-  int dSign=(((x+(~y+1))>>31)&1);
-  return  signD|dSign;
+  int isD=signX^signY;//return 1 if they are different
+  int signD=(isD)&(!signX);//if signX and signY are different, that x>y iff signX>0 
+  int dSign=(((x+(~y+1))>>31)&1);//return 1 if x-y<0
+  return  (signD|((!isD)&(!dSign)))&(!!(x^y));//return if either signD or dSign is true, and check whether x and y are equal
 }
 /* 
  * replaceByte(x,n,c) - Replace byte n in x with c
@@ -444,7 +445,18 @@ int bitParity(int x) {
  *  Rating: 4
  */
 int howManyBits(int x) {
-  return 0;
+	int signB;
+	int sum;
+	int bias;
+	signB=x>>31; // return 1111.. if negative otherwise 00000...
+	x=signB^x;
+	sum=(!!(x>>16))<<4;
+	sum=sum|(!!(x>>(sum+8)))<<3;
+	sum=sum|(!!(x>>(sum+4)))<<2;
+	sum=sum|(!!(x>>(sum+2)))<<1;
+	sum=sum|x>>(sum+1);
+	bias=!(x^0); //return 1 if x is 0
+	return sum +2 +(~bias+1);
 }
 /*
  * isPallindrome - Return 1 if bit pattern in x is equal to its mirror image
