@@ -369,9 +369,16 @@ int bitMask(int highbit, int lowbit) {
  *   Rating: 3
  */
 int ezThreeFourths(int x) {
-  int k=x>>2;
-  k=k+k+k;
-  return k;
+  int mask;
+  int  sign;
+  int bias;
+  int  Fdiv;
+  x=((x<<1)+x);
+  mask=0x3;
+  sign=(x>>31);
+  bias=mask&sign;
+  Fdiv=((x+bias)>>2);
+  return Fdiv;
 }
 /* 
  * isGreater - if x > y  then return 1, else return 0 
