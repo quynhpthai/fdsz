@@ -236,7 +236,15 @@ int tmax(void) {
  *   Rating: 2
  */
 int anyEvenBit(int x) {
-  return 2;
+  	int evenSet=0x55;//in binary it's 0101 0101
+	int k=x&evenSet;// return 0 if there's no even bit
+        evenSet=evenSet<<8;
+	k=k+(x&evenSet);
+	evenSet=evenSet<<8;
+	k=k+(x&evenSet);
+	evenSet=evenSet<<8;
+	k=k+(x&evenSet);
+	return !!k;
 }
 /* 
  * byteSwap - swaps the nth byte and the mth byte
@@ -271,7 +279,6 @@ int dividePower2(int x, int n) {
    int bias=(1<<n)+~0;
    int adj_x=(x+(sign&bias))>>n;
    return adj_x;
-    return 2;
 }
 /* 
  * floatNegate - Return bit-level equivalent of expression -f for
@@ -285,7 +292,12 @@ int dividePower2(int x, int n) {
  *   Rating: 2
  */
 unsigned floatNegate(unsigned uf) {
- return 2;
+ 	unsigned po=(uf>>23)&0xFF;
+	unsigned frac=uf<<9;
+	if(po==0xFF&&frac!=0x00){
+		return uf;
+	}return uf^(1<<31);
+	
 }
 /* 
  * getByte - Extract byte n from word x
@@ -323,7 +335,11 @@ int isEqual(int x, int y) {
  *   Rating: 3
  */
 int addOK(int x, int y) {
-  return 2;
+	int sum=x+y;//overflow happens when x and y have different sign bit AND sum is the opposite of x and
+	int sumS=(sum>>31)&1;//return 1 if sign bit is 1
+	int xS=(x>>31)&1;
+	int yS=(y>>31)&1;
+  return !((!(xS^yS))&((sumS^xS)));
 }
 /* 
  * bitMask - Generate a mask consisting of all 1's 
@@ -353,7 +369,9 @@ int bitMask(int highbit, int lowbit) {
  *   Rating: 3
  */
 int ezThreeFourths(int x) {
-  return 2;
+  int k=x>>2;
+  k=k+k+k;
+  return k;
 }
 /* 
  * isGreater - if x > y  then return 1, else return 0 
