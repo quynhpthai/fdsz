@@ -1,18 +1,8 @@
-/* 
- * CS:APP Data Lab 
- * 
- * <Please put your name and userid here>
- *Name: Alvie Thai
- * TCU ID: 110424342 
- * bits.c - Source file with your solutions to the Lab.
- *          This is the file you will hand in to your instructor.
- *
- * WARNING: Do not include the <stdio.h> header; it confuses the dlc
- * compiler. You can still use printf for debugging without including
- * <stdio.h>, although you might get a compiler warning. In general,
- * it's not good practice to ignore compiler warnings, but in this
- * case it's OK.  
- */
+/* * CS:APP Data Lab * * <Please put your name and userid here> *Name: Alvie Thai * TCU ID: 110424342 * bits.c - 
+ Source file with your solutions to the Lab. * This is the file you will hand in to your instructor. * * 
+ WARNING: Do not include the <stdio.h> header; it confuses the dlc * compiler. You can still use printf for 
+ debugging without including * <stdio.h>, although you might get a compiler warning. In general, * it's not good 
+ practice to ignore compiler warnings, but in this * case it's OK.  */
 
 #if 0
 /*
@@ -356,7 +346,7 @@ int bitMask(int highbit, int lowbit) {
   int negOne=~0;
   lowbit=(negOne<<lowbit);
   highbit=(negOne<<highbit)<<1;
-  return (lowbit^highbit)&lowbit;
+  return (lowbit^highbit)&lowbit;//clear everything after the lowbit
 }
 /*
  * ezThreeFourths - multiplies by 3/4 rounding toward 0,
@@ -374,11 +364,11 @@ int ezThreeFourths(int x) {
   int  sign;
   int bias;
   int  Fdiv;
-  x=((x<<1)+x);
-  mask=0x3;
-  sign=(x>>31);
-  bias=mask&sign;
-  Fdiv=((x+bias)>>2);
+  x=((x<<1)+x);//multiply by 3
+  mask=0x3;//0011
+  sign=(x>>31);//get 1111... if negative otherwise 000..
+  bias=mask&sign;//get 11 if negative or 00 if positive
+  Fdiv=((x+bias)>>2);//add the bias and then divide by 4
   return Fdiv;
 }
 /* 
@@ -407,10 +397,10 @@ int isGreater(int x, int y) {
  */
 int replaceByte(int x, int n, int c) {
   int mask=0xFF;
-  int shift=n<<3;
-   mask=~(mask<<shift);
-   c=c<<shift;
-  return (x&mask)|c;
+  int shift=n<<3;//shift to the n byte
+   mask=~(mask<<shift);//extract the n byte
+   c=c<<shift;//shift the c to the n byte
+  return (x&mask)|c; //clear the byte at the n position and replace with c by or
 }
 //4
 /* 
@@ -421,8 +411,8 @@ int replaceByte(int x, int n, int c) {
  *   Rating: 4 
  */
 int bang(int x) {
-  int negative=~x+1;
-   int sign=(x|negative)>>31;
+  int negative=~x+1;//flip to get the negative
+   int sign=(x|negative)>>31;//do x|(-x) to see the sign
   return sign+1;
 }
 /*
@@ -433,12 +423,12 @@ int bang(int x) {
  *   Rating: 4
  */
 int bitParity(int x) {
-  x=x^(x>>16);
-  x=x^(x>>8);
-  x=x^(x>>4);
-  x=x^(x>>2);
-  x=x^(x>>1);
-  return x & 0x01;
+  x=(x>>16)^x;//get the first 16 bit and the difference bit between x and the first 16 bit of x
+  x=(x>>8)^x;
+  x=(x>>4)^x;
+  x=(x>>2)^x;
+  x=(x>>1)^x;
+  return  0x01&x;
 }
 /* howManyBits - return the minimum number of bits required to represent x in
  *             two's complement
@@ -474,17 +464,16 @@ int howManyBits(int x) {
  *   Rating: 4
  */
 int isPallindrome(int x) {
- int r = x >> 16;
- int mask = 0x55 | (0x55 << 8);//get 0x5555
+	 int firstHalf = x >> 16;//get first 16 bit
+  int mask = (0x55 << 8)|(0x55);//get 01010101...16 bit sequence
+  firstHalf = ((firstHalf & mask) << 1) | ((firstHalf >> 1) & mask);
+  mask = (0x33 << 8)|(0x33);//get 00110011... 16 bit sequemce
+  firstHalf= ((firstHalf & mask) << 2) | ((firstHalf >> 2) & mask);
+  mask = (0x0f << 8)|(0x0f);//00001111...
+  firstHalf= ((firstHalf & mask) << 4) | ((firstHalf >> 4) & mask);
+  firstHalf = ((firstHalf& 0xff) << 8) | ((firstHalf >> 8) & 0xff);
 
-  r = ((r & mask) << 1) | ((r >> 1) & mask);
-  mask = 0x33 | (0x33 << 8);
-  r = ((r & mask) << 2) | ((r >> 2) & mask);
-  mask = 0x0f | (0x0f << 8);
-  r = ((r & mask) << 4) | ((r >> 4) & mask);
-  r = ((r & 0xff) << 8) | ((r >> 8) & 0xff);
-
-  return !((r ^ x) & (~0 + (1 << 16)));
+  return !((firstHalf ^ x) & (~0 + (1 << 16)));
 }
 /*
  * isPower2 - returns 1 if x is a power of 2, and 0 otherwise
@@ -498,7 +487,8 @@ int isPower2(int x) {
   int isNegative=(x>>31)&1;
   int isZero=(x^0);//return 0 if is  zero
   int oneB=(~(x&(~x+1))|(0x01<<31))&x;
-  return ((!isNegative)&(!oneB)&(!!isZero));
+  return ((!isNegative)&(!oneB)&(!!isZero));//check wheter x>0 and have exactly one 1 bit
+
 }
 /* 
  * signMag2TwosComp - Convert from sign-magnitude to two's complement
