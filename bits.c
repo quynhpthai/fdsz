@@ -2,7 +2,8 @@
  * CS:APP Data Lab 
  * 
  * <Please put your name and userid here>
- * 
+ *Name: Alvie Thai
+ * TCU ID: 110424342 
  * bits.c - Source file with your solutions to the Lab.
  *          This is the file you will hand in to your instructor.
  *
@@ -179,10 +180,10 @@ NOTES:
  *   Rating: 1
  */
 int bitMatch(int x, int y) {
-  int matchedOnes=x&y;
-  int matchedZero=~x&~y;
+  int matchedOnes=x&y;//match the 1
+  int matchedZero=~x&~y;//return 1 if the zero location matchh
 
-  return ~(~matchedOnes&~matchedZero);
+  return ~(~matchedOnes&~matchedZero);//(matchedOnes|matched Zero)
 }
 /* 
  * bitXor - x^y using only ~ and & 
@@ -192,8 +193,8 @@ int bitMatch(int x, int y) {
  *   Rating: 1
  */
 int bitXor(int x, int y) {
-  int notX=(~x&y);
-  int notY=(x&~y);
+  int notX=(~x&y);//match to see if there is any 0 in x match with 1 in y
+  int notY=(x&~y);//check if there is any 0 in y match 1 in x
   return ~((~notX)&(~notY));
 }
 /* 
@@ -203,7 +204,7 @@ int bitXor(int x, int y) {
  *   Rating: 1
  */
 int minusOne(void) {
-  int flip=~(0x1);
+  int flip=~(0x1);//flip and add 1
   int add=flip+1;
   return add;
 }
@@ -213,7 +214,8 @@ int minusOne(void) {
  *   Max ops: 3
  *   Rating: 1
  */
-int specialBits(void) {
+int specialBits(void) {//we know that the pattern has 1111...10010100011111.., so we flip 0010 into 1101=D and flip 
+//1000 into 0111 and then move into the appropriate position and then negate them all
     return ~(0xD7 <<14);
 }
 /* 
@@ -223,8 +225,8 @@ int specialBits(void) {
  *   Rating: 1
  */
 int tmax(void) {
-  int eight=0x8;
-  return ~(eight<<28);
+  int eight=0x8;//1000
+  return ~(eight<<28);//01111=2^31-1
 }
 //2
 /* 
@@ -238,7 +240,7 @@ int tmax(void) {
 int anyEvenBit(int x) {
   	int evenSet=0x55;//in binary it's 0101 0101
 	int k=x&evenSet;// return 0 if there's no even bit
-        evenSet=evenSet<<8;
+        evenSet=evenSet<<8;//move them into the each byte and or them all
 	k=k+(x&evenSet);
 	evenSet=evenSet<<8;
 	k=k+(x&evenSet);
@@ -258,13 +260,12 @@ int anyEvenBit(int x) {
 int byteSwap(int x, int n, int m) {
         int one=0xFF;
 	int y=0;
-	int leftB=(x>>(n<<3));
+	int leftB=(x>>(n<<3));//multiple n by 8, then right shift x 8n bits, to put the n byte at the left most place
 	int rightB=(x>>(m<<3));
-	y=one&(leftB^rightB);
+	y=one&(leftB^rightB);//get 1 if the bits are different, otherwise 0
 	x=x^(y<<(n<<3));
 	x=x^(y<<(m<<3));
 	return x;
-	
 }
 /* 
  * dividePower2 - Compute x/(2^n), for 0 <= n <= 30
@@ -275,9 +276,9 @@ int byteSwap(int x, int n, int m) {
  *   Rating: 2
  */
 int dividePower2(int x, int n) {
-   int sign=x>>31;
+   int sign=x>>31;// calulate the sign bit
    int bias=(1<<n)+~0;
-   int adj_x=(x+(sign&bias))>>n;
+   int adj_x=(x+(sign&bias))>>n;//plus the bias than divide by 2^n
    return adj_x;
 }
 /* 
@@ -292,10 +293,10 @@ int dividePower2(int x, int n) {
  *   Rating: 2
  */
 unsigned floatNegate(unsigned uf) {
- 	unsigned po=(uf>>23)&0xFF;
-	unsigned frac=uf<<9;
+ 	unsigned po=(uf>>23)&0xFF;//get the last 2 byte
+	unsigned frac=uf<<9;//emit the last 9 bit
 	if(po==0xFF&&frac!=0x00){
-		return uf;
+		return uf;//return the argument if it is NaN
 	}return uf^(1<<31);
 	
 }
@@ -309,9 +310,9 @@ unsigned floatNegate(unsigned uf) {
  */
 int getByte(int x, int n) {
   int k=0xFF;
-  int h=k<<(n<<3);
-  int a=x&h;
-  return (a>>(n<<3))&k;
+  int h=k<<(n<<3);//shift the 11111111 to the 8*n bit
+  int a=x&h;//get that byte
+  return (a>>(n<<3))&k;//shift them into the first byte
 }
 /* 
  * isEqual - return 1 if x == y, and 0 otherwise 
@@ -473,7 +474,17 @@ int howManyBits(int x) {
  *   Rating: 4
  */
 int isPallindrome(int x) {
-    return 2;
+ int r = x >> 16;
+ int mask = 0x55 | (0x55 << 8);//get 0x5555
+
+  r = ((r & mask) << 1) | ((r >> 1) & mask);
+  mask = 0x33 | (0x33 << 8);
+  r = ((r & mask) << 2) | ((r >> 2) & mask);
+  mask = 0x0f | (0x0f << 8);
+  r = ((r & mask) << 4) | ((r >> 4) & mask);
+  r = ((r & 0xff) << 8) | ((r >> 8) & 0xff);
+
+  return !((r ^ x) & (~0 + (1 << 16)));
 }
 /*
  * isPower2 - returns 1 if x is a power of 2, and 0 otherwise
@@ -484,9 +495,10 @@ int isPallindrome(int x) {
  *   Rating: 4
  */
 int isPower2(int x) {
-  int isNegative=(!x<<31)>>31;
+  int isNegative=(x>>31)&1;
+  int isZero=(x^0);//return 0 if is  zero
   int oneB=(~(x&(~x+1))|(0x01<<31))&x;
-  return (~isNegative&!oneB);
+  return ((!isNegative)&(!oneB)&(!!isZero));
 }
 /* 
  * signMag2TwosComp - Convert from sign-magnitude to two's complement
@@ -497,5 +509,17 @@ int isPower2(int x) {
  *   Rating: 4
  */
 int signMag2TwosComp(int x) {
-  return 2;
+	int k=0x8;//we need 0x7FFFFFFF, so we find the their negate first
+	int flip;
+	int sign;
+	k=~(k<<28);
+	sign=(x>>31);//return 111... if is negative,000 if positive
+	x=x&k;//emit the sign bit
+
+	flip=(~x)+1;
+
+	//if is negative, than flip, otherwise give 000..
+      // if is positive than take x, otherwise give 000...
+
+ 	 return (~sign&x)|(sign&flip);
 }
